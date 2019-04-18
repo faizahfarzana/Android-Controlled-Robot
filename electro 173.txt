@@ -1,0 +1,106 @@
+
+#include <Servo.h>
+Servo servo;
+Servo fullservo;  
+  
+const int motorA1  =   5;  
+const int motorA2  =   9;  
+const int motorB1  =   6; 
+const int motorB2  =  10;
+
+const int handA1   =   4;
+const int handA2   =   7;
+
+const int servopin =  11;
+const int fullservopin =  12;
+
+const int BTState   =   2;  
+
+int state;
+  
+void setup() {
+  servo.attach(servopin); 
+  fullservo.attach(fullservopin); 
+  
+  pinMode(BTState,  INPUT);
+  
+  pinMode(motorA1, OUTPUT);   
+  pinMode(motorA2, OUTPUT);
+  pinMode(motorB1, OUTPUT);   
+  pinMode(motorB2, OUTPUT);
+
+  pinMode(handA1, OUTPUT);    
+  pinMode(handA2, OUTPUT);
+
+  Serial.begin(38400);
+}
+
+void loop() {
+  if  (digitalRead(BTState) == LOW) state = 'S';
+  if  (Serial.available() > 0)      state = Serial.read();
+
+  if      (state == 'F')  forward();
+  else if (state == 'B')  backward();
+  else if (state == 'L')  left();
+  else if (state == 'R')  right();
+  else if (state == 'G')  forwardleft();
+  else if (state == 'I')  forwardRight();
+  else if (state == 'H')  backwardLeft();
+  else if (state == 'J')  backwardRight();
+  else if (state == 'S')  stop_bot();
+  else if (state == 'W')  servo.write(60);
+  else if (state == 'w')  servo.write(10);
+  else if (state == 'U')  fullservo.write(60);
+  else if (state == 'u')  fullservo.write(10);
+  else if (state == 'V')  grip();
+  else if (state == 'v')  release_hand();
+}
+
+void grip()         {analogWrite(handA1, 255);  analogWrite(handA2,   0);}
+void release_hand() {analogWrite(handA1,   0);  analogWrite(handA2, 255);}
+
+
+void forward(){
+  analogWrite(motorA1, 200);   analogWrite(motorA2,   0); 
+  analogWrite(motorB1, 200);   analogWrite(motorB2,   0); 
+}
+
+void backward(){
+  analogWrite(motorA1,   0);   analogWrite(motorA2, 200);
+  analogWrite(motorB1,   0);   analogWrite(motorB2, 200); 
+}
+
+void left(){
+  analogWrite(motorA1,   0);   analogWrite(motorA2,   0); 
+  analogWrite(motorB1, 200);   analogWrite(motorB2,   0); 
+}
+
+void right(){
+  analogWrite(motorA1, 200);   analogWrite(motorA2,   0); 
+  analogWrite(motorB1,   0);   analogWrite(motorB2,   0); 
+}
+
+void forwardleft(){
+  analogWrite(motorA1, 100);   analogWrite(motorA2,   0);  
+  analogWrite(motorB1, 200);   analogWrite(motorB2,   0); 
+}
+
+void forwardRight(){
+  analogWrite(motorA1, 200);   analogWrite(motorA2,   0); 
+  analogWrite(motorB1, 100);   analogWrite(motorB2,   0);
+}
+
+void backwardLeft(){
+  analogWrite(motorA1,  0);    analogWrite(motorA2, 100); 
+  analogWrite(motorB1,  0);    analogWrite(motorB2, 200); 
+}
+
+void backwardRight(){
+  analogWrite(motorA1,  0);    analogWrite(motorA2, 200); 
+  analogWrite(motorB1,  0);    analogWrite(motorB2, 100); 
+}
+
+void stop_bot(){
+  analogWrite(motorA1,   0);   analogWrite(motorA2,   0); 
+  analogWrite(motorB1,   0);   analogWrite(motorB2,   0);
+}
